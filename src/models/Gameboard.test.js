@@ -18,17 +18,45 @@ describe('Gameboard', () => {
         });
     });
 
-    describe('assign()', () => {
-        test('should assign the given value to the passed in [x, y] coordinates.', () => {
-            board.assign('test', [4, 4]);
-            const index = board.getIndex([4, 4]);
-            expect(board.coordinates[index]).toBe('test');
+    describe('setValue() and getValue()', () => {
+        test('should set or retrieve the value of a given [x, y] coordinate.', () => {
+            board.setValue('test', [4, 4]);
+            expect(board.getValue([4, 4])).toBe('test');
         });
     });
 
     describe('getIndex()', () => {
         test('should return the index of this.coordinates matching the given [x, y].', () => {
             expect(board.getIndex([4, 4])).toBe(36);
+        });
+    });
+
+    describe('receiveAttack()', () => {
+        test('should look up the given coordinate, and if a ship is present, hit it', () => {
+            const ship = board.placeShip([
+                [2, 3],
+                [2, 4],
+            ]);
+            board.receiveAttack([2, 3]);
+            expect(ship.hits).toBe(1);
+        });
+        test('should remove the ship if it is sunk after being hit', () => {
+            const ship = board.placeShip([
+                [2, 3],
+                [2, 4],
+            ]);
+            expect(board.ships.includes(ship)).toBe(true);
+            board.receiveAttack([2, 3]);
+            board.receiveAttack([2, 4]);
+            expect(board.ships.includes(ship)).toBe(false);
+        });
+        test('should mark the coordinate as a miss if no ship is present', () => {
+            const ship = board.placeShip([
+                [2, 3],
+                [2, 4],
+            ]);
+            board.receiveAttack([2, 5]);
+            expect(board.getValue([2, 5])).toBe('miss');
         });
     });
 });

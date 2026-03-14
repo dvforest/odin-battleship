@@ -12,8 +12,12 @@ class Gameboard {
         return y * this.width + x;
     }
 
-    assign(value, [x, y]) {
+    setValue(value, [x, y]) {
         this.coordinates[this.getIndex([x, y])] = value;
+    }
+
+    getValue([x, y]) {
+        return this.coordinates[this.getIndex([x, y])];
     }
 
     canPlaceShip(coordinates) {
@@ -30,9 +34,21 @@ class Gameboard {
         const ship = new Ship(coordinates.length);
         this.ships.push(ship);
         coordinates.forEach((coord) => {
-            this.assign(ship, coord);
+            this.setValue(ship, coord);
         });
         return ship;
+    }
+
+    receiveAttack([x, y]) {
+        const ship = this.getValue([x, y]);
+        if (ship) {
+            ship.hit();
+            if (ship.isSunk()) {
+                const index = this.ships.indexOf(ship);
+                this.ships.splice(index, 1);
+            }
+        }
+        this.setValue('miss', [x, y]);
     }
 }
 
