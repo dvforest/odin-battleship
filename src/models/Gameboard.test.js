@@ -48,7 +48,7 @@ describe('Gameboard', () => {
             expect(board.ships.includes(ship)).toBe(true);
             board.receiveAttack([2, 3]);
             board.receiveAttack([2, 4]);
-            expect(board.ships.includes(ship)).toBe(false);
+            expect(board.containsShip(ship)).toBe(false);
         });
         test('should mark the coordinate as a miss if no ship is present', () => {
             const ship = board.placeShip([
@@ -57,6 +57,25 @@ describe('Gameboard', () => {
             ]);
             board.receiveAttack([2, 5]);
             expect(board.getValue([2, 5])).toBe('miss');
+        });
+    });
+
+    describe('containsShip', () => {
+        test('should return true if the given ship is on the board, otherwise false', () => {
+            const ship = board.placeShip([
+                [2, 3],
+                [2, 4],
+            ]);
+            expect(board.containsShip(ship)).toBe(true);
+        });
+
+        test('should return true if at least one ship is on the board, otherwise false', () => {
+            expect(board.containsShip()).toBe(false);
+            const ship = board.placeShip([
+                [2, 3],
+                [2, 4],
+            ]);
+            expect(board.containsShip()).toBe(true);
         });
     });
 });

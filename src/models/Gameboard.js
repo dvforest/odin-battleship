@@ -39,6 +39,13 @@ class Gameboard {
         return ship;
     }
 
+    containsShip(ship = null){
+        if (ship) {
+            return this.ships.includes(ship);
+        }
+        return this.ships.length > 0 ? true : false;
+    }
+
     receiveAttack([x, y]) {
         const ship = this.getValue([x, y]);
         if (ship) {
