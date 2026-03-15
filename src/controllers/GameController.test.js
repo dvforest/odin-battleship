@@ -3,33 +3,36 @@ import { GameController } from './GameController.js';
 import { Player } from '../models/Player.js';
 
 describe('GameController', () => {
-    let player1;
-    let player2;
+    let game;
 
     beforeEach(() => {
-        player1 = new Player('real');
-        player2 = new Player('computer');
+        game = new GameController();
     });
 
     describe('constructor()', () => {
-        test('should throw an error if either player is not a Player instance', () => {
-            const fakePlayer = { name: 'impostor' };
-            expect(() => new GameController(player1, fakePlayer)).toThrowError();
-            expect(() => new GameController(player1, player2)).not.toThrowError();
+        test('should have two valid Player instances', () => {
+            expect(game.player1 instanceof Player).toBe(true);
+            expect(game.player2 instanceof Player).toBe(true);
         });
 
         test('should be initialized with isGameOver set to false', () => {
-            const game = new GameController(player1, player2);
             expect(game.isGameOver).toBe(false);
         });
     });
 
     describe('switchTurn()', () => {
         test('should switch the active player to become the opposite player', () => {
-            const game = new GameController(player1, player2);
-            expect(game.activePlayer).toBe(player1);
+            expect(game.activePlayer).toBe(game.player1);
             game.switchTurn();
-            expect(game.activePlayer).toBe(player2);
+            expect(game.activePlayer).toBe(game.player2);
+        });
+    });
+
+    describe('init()', () => {
+        test('player1.board should contain iterable coordinates', () => {
+            const coords = game.player1.board.coordinates;
+            expect(Array.isArray(coords)).toBe(true);
+            expect(coords.length).toBeGreaterThan(0);
         });
     });
 });

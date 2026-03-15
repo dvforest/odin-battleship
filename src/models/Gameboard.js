@@ -12,6 +12,12 @@ class Gameboard {
         return y * this.width + x;
     }
 
+    getCoord(index) {
+        const x = index % this.width;
+        const y = Math.floor(index / this.width);
+        return [x, y];
+    }
+
     setValue(value, [x, y]) {
         this.coordinates[this.getIndex([x, y])] = value;
     }
@@ -39,7 +45,7 @@ class Gameboard {
         return ship;
     }
 
-    containsShip(ship = null){
+    containsShip(ship = null) {
         if (ship) {
             return this.ships.includes(ship);
         }

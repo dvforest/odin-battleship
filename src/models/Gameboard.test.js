@@ -31,6 +31,12 @@ describe('Gameboard', () => {
         });
     });
 
+    describe('getCoord()', () => {
+        test('should return a [x, y] coordinate matching the given index.', () => {
+            expect(board.getCoord(36)).toEqual([4, 4]);
+        });
+    });
+
     describe('receiveAttack()', () => {
         test('should look up the given coordinate, and if a ship is present, hit it', () => {
             const ship = board.placeShip([

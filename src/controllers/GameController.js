@@ -1,20 +1,20 @@
 import { Player } from '../models/Player';
+import { DOMRenderer } from '../ui/DOMRenderer.js';
 
 class GameController {
-    constructor(player1, player2) {
-        if (!(player1 instanceof Player) || !(player2 instanceof Player)) {
-            throw new Error(
-                'Invalid arguments. All players must be a valid instance of Player class.',
-            );
-        }
-        this.players = [player1, player2];
-        this.activePlayer = player1;
+    constructor() {
+        this.player1 = new Player('real');
+        this.player2 = new Player('computer');
+        this.activePlayer = this.player1;
         this.isGameOver = false;
     }
 
+    init() {
+        DOMRenderer.renderBoard(this.player1.board);
+    }
+
     switchTurn() {
-        this.activePlayer =
-            this.activePlayer === this.players[0] ? this.players[1] : this.players[0];
+        this.activePlayer = this.activePlayer === this.player1 ? this.player2 : this.player1;
     }
 }
 
