@@ -6,7 +6,7 @@ class Player {
             throw new Error("Invalid player type. The value must be either 'real' or 'computer'.");
         }
         this.type = type;
-        this.board = new Gameboard(8, 8);
+        this.board = new Gameboard(10, 10);
     }
 }
 

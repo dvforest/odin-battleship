@@ -14,7 +14,7 @@ class DOMRenderer {
 
         const grid = createEl('div', {
             classes: ['grid'],
-            attrs: { id: 'player-board' },
+            attrs: { id: 'player-board', style: `--cols:${board.width};` },
             children: cells,
         });
 
