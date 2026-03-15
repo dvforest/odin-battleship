@@ -22,12 +22,25 @@ h6 {
     align-items: center;
 }
 
-.grid {
+.grid-stage {
     display: grid;
-    grid-template-columns: repeat(var(--cols), 1fr);
     width: 500px;
     height: 500px;
+}
+
+.grid-stage > .layer {
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-area: 1 / 1;
+    display: grid;
+}
+
+.grid {
     border: 3px solid black;
+    z-index: 2;
+}
+
+.ships {
+    z-index: 1;
 }
 
 .cell {
