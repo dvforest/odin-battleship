@@ -23,33 +23,36 @@ class GameController {
 
     getPlayerShips() {
         return [
-            [
-                [0, 0],
-                [0, 1],
-            ],
-            [
-                [5, 4],
-                [5, 5],
-                [5, 6],
-            ],
-            [
-                [4, 7],
-                [5, 7],
-                [6, 7],
-            ],
-            [
-                [6, 8],
-                [7, 8],
-                [8, 8],
-                [9, 8],
-            ],
-            [
-                [1, 3],
-                [1, 4],
-                [1, 5],
-                [1, 6],
-                [1, 7],
-            ],
+            {
+                name: 'Destroyer',
+                position: [0, 0],
+                direction: 'vertical',
+                length: 2,
+            },
+            {
+                name: 'Submarine',
+                position: [5, 4],
+                direction: 'vertical',
+                length: 3,
+            },
+            {
+                name: 'Cruiser',
+                position: [4, 7],
+                direction: 'horizontal',
+                length: 3,
+            },
+            {
+                name: 'Battleship',
+                position: [6, 8],
+                direction: 'horizontal',
+                length: 4,
+            },
+            {
+                name: 'Aircraft Carrier',
+                position: [1, 3],
+                direction: 'vertical',
+                length: 4,
+            },
         ];
     }
 }

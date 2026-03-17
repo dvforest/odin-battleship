@@ -4,11 +4,29 @@ import { Ship } from './Ship.js';
 describe('Ship', () => {
     let ship;
     beforeEach(() => {
-        ship = new Ship(3);
+        ship = new Ship({
+            name: 'Submarine',
+            position: [5, 4],
+            direction: 'vertical',
+            length: 3,
+        });
     });
     describe('constructor()', () => {
-        test('should initialize with correct length and 0 hits', () => {
+        test('should initialize with correct length', () => {
             expect(ship.length).toBe(3);
+        });
+        test('should throw error if length is not between 2 and 5.', () => {
+            expect(
+                () =>
+                    new Ship({
+                        name: 'badLength',
+                        position: [0, 0],
+                        direction: 'horizontal',
+                        length: -1,
+                    }),
+            ).toThrowError();
+        });
+        test('should initialize with zero hits', () => {
             expect(ship.hits).toBe(0);
         });
     });
@@ -29,7 +47,7 @@ describe('Ship', () => {
 
         test('should return false if not enough hits', () => {
             ship.hit();
-            expect(ship.isSunk()).toBeFalsy();
+            expect(ship.isSunk()).toBe(false);
         });
     });
 });

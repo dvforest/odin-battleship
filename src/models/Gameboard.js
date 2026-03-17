@@ -26,22 +26,38 @@ class Gameboard {
         return this.coordinates[this.getIndex([x, y])];
     }
 
+    getShipCoords(shipData) {
+        const coordinates = [];
+        let [x, y] = shipData.position;
+        while (coordinates.length < shipData.length) {
+            coordinates.push([x, y]);
+            if (shipData.direction === 'horizontal') {
+                x += 1;
+            } else if (shipData.direction === 'vertical') {
+                y += 1;
+            }
+        }
+        return coordinates;
+    }
+
     canPlaceShip(coordinates) {
-        return coordinates.every((coord) => {
-            const index = this.getIndex(coord);
+        return coordinates.every(([x, y]) => {
+            const inBounds = x >= 0 && x < this.width && y >= 0 && y < this.height;
+            if (!inBounds) return false;
+
+            let index = this.getIndex([x, y]);
             return this.coordinates[index] === null;
         });
     }
 
-    placeShip(coordinates) {
+    placeShip(shipData) {
+        const coordinates = this.getShipCoords(shipData);
         if (!this.canPlaceShip(coordinates)) {
-            throw new Error('Invalid ship placement');
+            return null;
         }
-        const ship = new Ship(coordinates.length);
+        const ship = new Ship(shipData);
         this.ships.push(ship);
-        coordinates.forEach((coord) => {
-            this.setValue(ship, coord);
-        });
+        coordinates.forEach((coord) => this.setValue(ship, coord));
         return ship;
     }
 
