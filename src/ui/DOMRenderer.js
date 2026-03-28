@@ -1,4 +1,5 @@
-import { createEl } from '../utils/DOMBuilder';
+import { createEl } from '../utils/DOMBuilder.js';
+import { img } from '../assets/assetImporter.js';
 
 class DOMRenderer {
     static renderBoard(board) {
@@ -19,18 +20,21 @@ class DOMRenderer {
 
         // Create ships
         const ships = [];
+        const cellPercent = 100 / board.width;
         board.ships.forEach((ship) => {
-            const xStart = ship.position[1] + 1, // Add 1 to conform to css grid 1-based indexing
-                yStart = ship.position[0] + 1;
-
-            const rStart = yStart,
-                cStart = xStart,
-                rEnd = ship.direction === 'vertical' ? yStart + ship.length : yStart,
-                cEnd = ship.direction === 'horizontal' ? xStart + ship.length : xStart;
-
-            const shipEl = createEl('div', {
+            const shipEl = createEl('img', {
                 classes: ['ship'],
-                attrs: { style: `grid-area : ${rStart} / ${cStart} / ${rEnd} / ${cEnd}` },
+                attrs: {
+                    style: `
+                        left: ${ship.position[0] * cellPercent}%;
+                        top: ${ship.position[1] * cellPercent}%;
+                        width: ${ship.length * cellPercent}%;
+                        height: ${cellPercent}%;
+                        transform-origin: ${50 / ship.length}% 50%;
+                        rotate: ${ship.direction === 'vertical' ? '90deg' : '0deg'};
+                    `,
+                    src: img[`ship${ship.length}`],
+                },
             });
             ships.push(shipEl);
         });

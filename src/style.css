@@ -24,6 +24,7 @@ h6 {
 
 .grid-stage {
     display: grid;
+    position: relative;
     grid-template-columns: repeat(var(--cols), 1fr);
     width: 500px;
     height: 500px;
@@ -31,11 +32,12 @@ h6 {
 }
 
 .grid-cell {
-    z-index: 2;
+    z-index: 1;
     border: 1px solid black;
 }
 
 .ship {
-    z-index: 1;
-    background-color: blue;
+    position: absolute;
+    z-index: 2;
+    filter: drop-shadow(0 5px 3px rgba(0, 0, 0, 0.3));
 }

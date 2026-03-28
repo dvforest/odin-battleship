@@ -51,7 +51,7 @@ class GameController {
                 name: 'Aircraft Carrier',
                 position: [1, 3],
                 direction: 'vertical',
-                length: 4,
+                length: 5,
             },
         ];
     }
