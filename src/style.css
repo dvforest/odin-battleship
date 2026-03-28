@@ -39,8 +39,9 @@ h6 {
     z-index: 2;
 }
 
-.ships {
+.ship {
     z-index: 1;
+    background-color: blue;
 }
 
 .cell {
