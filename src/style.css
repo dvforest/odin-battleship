@@ -24,26 +24,18 @@ h6 {
 
 .grid-stage {
     display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
     width: 500px;
     height: 500px;
-}
-
-.grid-stage > .layer {
-    grid-template-columns: repeat(var(--cols), 1fr);
-    grid-area: 1 / 1;
-    display: grid;
-}
-
-.grid {
     border: 3px solid black;
+}
+
+.grid-cell {
     z-index: 2;
+    border: 1px solid black;
 }
 
 .ship {
     z-index: 1;
     background-color: blue;
-}
-
-.cell {
-    border: 1px solid black;
 }

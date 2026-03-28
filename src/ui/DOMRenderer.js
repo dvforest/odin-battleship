@@ -7,7 +7,7 @@ class DOMRenderer {
         board.coordinates.forEach((value, index) => {
             const [x, y] = board.getCoord(index);
             const cell = createEl('div', {
-                classes: ['cell'],
+                classes: ['grid-cell'],
                 attrs: {
                     'data-x': x,
                     'data-y': y,
@@ -36,16 +36,10 @@ class DOMRenderer {
         });
 
         // Create grid layer
-        const gridLayer = createEl('div', {
-            classes: ['layer', 'grid'],
-            attrs: { style: `--cols:${board.width};` },
-            children: [...cells, ...ships],
-        });
-
-        // Create grid stage and append grid layer
         const gridStage = createEl('div', {
             classes: ['grid-stage'],
-            children: [gridLayer],
+            attrs: { style: `--cols:${board.width};` },
+            children: [...cells, ...ships],
         });
 
         // Append grid stage to app
