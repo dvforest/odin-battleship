@@ -19,25 +19,51 @@ class GameController {
     }
 
     start() {
-        // Set game phase and UI mode to PLACING SHIPS
-        this.phase = gamePhase.PLACING_SHIPS;
-        setUIMode(UIMode.PLACING_SHIPS);
+        DOMRenderer.renderBoard(this.player1.board);
+        this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
 
-        // Get preassigned ship locations
+        /*
         const playerShips = this.getPlayerShips();
         playerShips.forEach((ship) => {
             this.player1.board.placeShip(ship);
-        });
-
-        // Render board
-        DOMRenderer.renderBoard(this.player1.board);
+        });*/
     }
 
     switchTurn() {
         this.activePlayer = this.activePlayer === this.player1 ? this.player2 : this.player1;
     }
 
-    handleHover() {}
+    handleHover(x, y) {
+        if (this.phase === gamePhase.PLACING_SHIPS) {
+            const board = this.player1.board;
+            const ship = {
+                name: 'Destroyer',
+                position: [x, y],
+                direction: 'vertical',
+                length: 2,
+            };
+
+            const valid = board.canPlaceShip(ship);
+            if (valid) DOMRenderer.previewShip(ship, valid, this.player1.board);
+        }
+    }
+
+    handleClick(x, y) {
+        console.log('click handled');
+    }
+
+    handlePlaceShip() {
+        const playerShips = this.player1.board.ships;
+        const targetShips = 5;
+        if (playerShips.length === targetShips) {
+            console.log('move to next phase');
+        }
+    }
+
+    setPhase(phase, UIMode) {
+        this.phase = phase;
+        setUIMode(UIMode);
+    }
 
     getPlayerShips() {
         return [

@@ -18,14 +18,29 @@ class DOMRenderer {
             cells.push(cell);
         });
 
-        // Create ships
-        const ships = [];
+        // Create grid layer
+        const gridStage = createEl('div', {
+            classes: ['grid-stage'],
+            attrs: { style: `--cols:${board.width};` },
+            children: [...cells],
+        });
+
+        // Append grid stage to app
+        const app = document.querySelector('.app');
+        app.appendChild(gridStage);
+    }
+
+    static previewShip(ship, valid, board) {
+        // Clear preview ship
+        const gridStage = document.querySelector('.grid-stage');
+        const existing = gridStage.querySelector('.preview-ship');
+        if (existing) existing.remove();
+
         const cellPercent = 100 / board.width;
-        board.ships.forEach((ship) => {
-            const shipEl = createEl('img', {
-                classes: ['ship'],
-                attrs: {
-                    style: `
+        const previewShip = createEl('img', {
+            classes: ['preview-ship'],
+            attrs: {
+                style: `
                         left: ${ship.position[0] * cellPercent}%;
                         top: ${ship.position[1] * cellPercent}%;
                         width: ${ship.length * cellPercent}%;
@@ -33,22 +48,11 @@ class DOMRenderer {
                         transform-origin: ${50 / ship.length}% 50%;
                         rotate: ${ship.direction === 'vertical' ? '90deg' : '0deg'};
                     `,
-                    src: img[`ship${ship.length}`],
-                },
-            });
-            ships.push(shipEl);
+                src: img[`ship${ship.length}`],
+            },
         });
-
-        // Create grid layer
-        const gridStage = createEl('div', {
-            classes: ['grid-stage'],
-            attrs: { style: `--cols:${board.width};` },
-            children: [...cells, ...ships],
-        });
-
-        // Append grid stage to app
-        const app = document.querySelector('.app');
-        app.appendChild(gridStage);
+        if (valid) previewShip.classList.add('valid');
+        gridStage.append(previewShip);
     }
 }
 

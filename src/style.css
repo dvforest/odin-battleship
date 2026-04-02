@@ -39,6 +39,16 @@ h6 {
 .ship {
     position: absolute;
     z-index: 2;
-    filter: drop-shadow(0 5px 3px rgba(0, 0, 0, 0.3));
     pointer-events: none;
+}
+
+.preview-ship {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    filter: hue-rotate(330deg) saturate(2);
+}
+
+.preview-ship.valid {
+    filter: hue-rotate(200deg) saturate(2);
 }

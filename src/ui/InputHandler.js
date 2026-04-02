@@ -12,11 +12,16 @@ function onHover(e) {
     if (getUIMode() !== UIMode.PLACING_SHIPS) return;
     const cell = e.target.closest('.grid-cell');
     if (!cell) return;
-    gameController.handleHover(cell);
-    console.log('Hovered cell:', cell.dataset.x, cell.dataset.y);
+    const x = Number(cell.dataset.x);
+    const y = Number(cell.dataset.y);
+    gameController.handleHover(x, y);
 }
 
-function onClick() {
+function onClick(e) {
     if (getUIMode() !== UIMode.PLACING_SHIPS) return;
-    console.log('clicked');
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
+    const x = Number(cell.dataset.x);
+    const y = Number(cell.dataset.y);
+    gameController.handleClick(x, y);
 }
