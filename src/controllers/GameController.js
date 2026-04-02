@@ -1,5 +1,13 @@
 import { Player } from '../models/Player';
 import { DOMRenderer } from '../ui/DOMRenderer.js';
+import { UIMode, getUIMode, setUIMode } from '../ui/UIMode.js';
+
+const gamePhase = {
+    PLACING_SHIPS: 'placing-ships',
+    PLAYER_TURN: 'player-turn',
+    ENEMY_TURN: 'enemy-turn',
+    GAME_OVER: 'game-over',
+};
 
 class GameController {
     constructor() {
@@ -7,13 +15,21 @@ class GameController {
         this.player2 = new Player('computer');
         this.activePlayer = this.player1;
         this.isGameOver = false;
+        this.phase = null;
     }
 
-    init() {
+    start() {
+        // Set game phase and UI mode to PLACING SHIPS
+        this.phase = gamePhase.PLACING_SHIPS;
+        setUIMode(UIMode.PLACING_SHIPS);
+
+        // Get preassigned ship locations
         const playerShips = this.getPlayerShips();
         playerShips.forEach((ship) => {
             this.player1.board.placeShip(ship);
         });
+
+        // Render board
         DOMRenderer.renderBoard(this.player1.board);
     }
 
