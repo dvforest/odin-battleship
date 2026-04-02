@@ -37,6 +37,8 @@ class GameController {
         this.activePlayer = this.activePlayer === this.player1 ? this.player2 : this.player1;
     }
 
+    handleHover() {}
+
     getPlayerShips() {
         return [
             {

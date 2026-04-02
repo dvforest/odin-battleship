@@ -8,9 +8,12 @@ export function init(controller) {
     document.addEventListener('click', onClick);
 }
 
-function onHover() {
+function onHover(e) {
     if (getUIMode() !== UIMode.PLACING_SHIPS) return;
-    console.log('hovered');
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
+    gameController.handleHover(cell);
+    console.log('Hovered cell:', cell.dataset.x, cell.dataset.y);
 }
 
 function onClick() {
