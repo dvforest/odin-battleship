@@ -6,6 +6,7 @@ export function init(controller) {
     gameController = controller;
     document.addEventListener('mousemove', onHover);
     document.addEventListener('click', onClick);
+    document.addEventListener('keypress', onKeyPressed);
 }
 
 function onHover(e) {
@@ -24,4 +25,8 @@ function onClick(e) {
     const x = Number(cell.dataset.x);
     const y = Number(cell.dataset.y);
     gameController.handleClick(x, y);
+}
+
+function onKeyPressed(e) {
+    gameController.handleKeyPressed(e.code);
 }

@@ -27,6 +27,13 @@ class Gameboard {
     }
 
     getShipCoords(ship) {
+        if (!ship) {
+            console.error('getShipCoords called with ship = undefined');
+        }
+        if (!ship.position) {
+            console.error('Ship has no position!', ship);
+        }
+
         const coordinates = [];
         let [x, y] = ship.position;
         while (coordinates.length < ship.length) {
@@ -53,7 +60,7 @@ class Gameboard {
 
     placeShip(shipData) {
         const coordinates = this.getShipCoords(shipData);
-        if (!this.canPlaceShip(coordinates)) {
+        if (!this.canPlaceShip(shipData)) {
             return null;
         }
         const ship = new Ship(shipData);

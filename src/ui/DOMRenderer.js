@@ -54,6 +54,25 @@ class DOMRenderer {
         if (valid) previewShip.classList.add('valid');
         gridStage.append(previewShip);
     }
+
+    static renderShip(ship, board) {
+        const cellPercent = 100 / board.width;
+        const placedShip = createEl('img', {
+            classes: ['ship'],
+            attrs: {
+                style: `
+                        left: ${ship.position[0] * cellPercent}%;
+                        top: ${ship.position[1] * cellPercent}%;
+                        width: ${ship.length * cellPercent}%;
+                        height: ${cellPercent}%;
+                        transform-origin: ${50 / ship.length}% 50%;
+                        rotate: ${ship.direction === 'vertical' ? '90deg' : '0deg'};
+                    `,
+                src: img[`ship${ship.length}`],
+            },
+        });
+        document.querySelector('.grid-stage').append(placedShip);
+    }
 }
 
 export { DOMRenderer };

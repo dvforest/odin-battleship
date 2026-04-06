@@ -1,6 +1,7 @@
 import { Player } from '../models/Player';
 import { DOMRenderer } from '../ui/DOMRenderer.js';
 import { UIMode, getUIMode, setUIMode } from '../ui/UIMode.js';
+import { PlacementState } from './placement/PlacementState.js';
 
 const gamePhase = {
     PLACING_SHIPS: 'placing-ships',
@@ -13,6 +14,7 @@ class GameController {
     constructor() {
         this.player1 = new Player('real');
         this.player2 = new Player('computer');
+        this.playerShipPlacement = new PlacementState();
         this.activePlayer = this.player1;
         this.isGameOver = false;
         this.phase = null;
@@ -21,12 +23,6 @@ class GameController {
     start() {
         DOMRenderer.renderBoard(this.player1.board);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
-
-        /*
-        const playerShips = this.getPlayerShips();
-        playerShips.forEach((ship) => {
-            this.player1.board.placeShip(ship);
-        });*/
     }
 
     switchTurn() {
@@ -35,28 +31,55 @@ class GameController {
 
     handleHover(x, y) {
         if (this.phase === gamePhase.PLACING_SHIPS) {
-            const board = this.player1.board;
-            const ship = {
-                name: 'Destroyer',
-                position: [x, y],
-                direction: 'vertical',
-                length: 2,
-            };
+            const playerBoard = this.player1.board;
+            const ship = this.playerShipPlacement.getCurrentShip();
+            this.playerShipPlacement.currentPosition = [x, y];
 
-            const valid = board.canPlaceShip(ship);
-            if (valid) DOMRenderer.previewShip(ship, valid, this.player1.board);
+            ship.position = this.playerShipPlacement.currentPosition;
+            ship.direction = this.playerShipPlacement.currentDirection;
+
+            const valid = playerBoard.canPlaceShip(ship);
+            if (valid) DOMRenderer.previewShip(ship, valid, playerBoard);
         }
     }
 
     handleClick(x, y) {
-        console.log('click handled');
+        if (this.phase === gamePhase.PLACING_SHIPS) {
+            const playerBoard = this.player1.board;
+            const ship = this.playerShipPlacement.getCurrentShip();
+
+            ship.position = this.playerShipPlacement.currentPosition;
+            ship.direction = this.playerShipPlacement.currentDirection;
+
+            const valid = playerBoard.canPlaceShip(ship);
+
+            if (valid) {
+                playerBoard.placeShip(ship);
+                DOMRenderer.renderShip(ship, playerBoard);
+                this.playerShipPlacement.currentShipIndex += 1;
+                if (this.playerShipPlacement.isComplete()) {
+                    this.advancePhase();
+                }
+            }
+        }
     }
 
-    handlePlaceShip() {
-        const playerShips = this.player1.board.ships;
-        const targetShips = 5;
-        if (playerShips.length === targetShips) {
-            console.log('move to next phase');
+    handleKeyPressed(keyCode) {
+        if (this.phase === gamePhase.PLACING_SHIPS) {
+            switch (keyCode) {
+                case 'KeyR': {
+                    this.playerShipPlacement.rotate();
+                    const playerBoard = this.player1.board;
+                    const ship = this.playerShipPlacement.getCurrentShip();
+
+                    ship.position = this.playerShipPlacement.currentPosition;
+                    ship.direction = this.playerShipPlacement.currentDirection;
+
+                    const valid = playerBoard.canPlaceShip(ship);
+                    if (valid) DOMRenderer.previewShip(ship, valid, playerBoard);
+                    break;
+                }
+            }
         }
     }
 
@@ -65,39 +88,12 @@ class GameController {
         setUIMode(UIMode);
     }
 
-    getPlayerShips() {
-        return [
-            {
-                name: 'Destroyer',
-                position: [0, 0],
-                direction: 'vertical',
-                length: 2,
-            },
-            {
-                name: 'Submarine',
-                position: [5, 4],
-                direction: 'vertical',
-                length: 3,
-            },
-            {
-                name: 'Cruiser',
-                position: [4, 7],
-                direction: 'horizontal',
-                length: 3,
-            },
-            {
-                name: 'Battleship',
-                position: [6, 8],
-                direction: 'horizontal',
-                length: 4,
-            },
-            {
-                name: 'Aircraft Carrier',
-                position: [1, 3],
-                direction: 'vertical',
-                length: 5,
-            },
-        ];
+    advancePhase() {
+        switch (this.phase) {
+            case gamePhase.PLACING_SHIPS:
+                this.setPhase(gamePhase.PLAYER_TURN, UIMode.PLAYER_TURN);
+                break;
+        }
     }
 }
 
