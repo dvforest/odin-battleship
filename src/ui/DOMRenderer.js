@@ -2,7 +2,10 @@ import { createEl } from '../utils/DOMBuilder.js';
 import { img } from '../assets/assetImporter.js';
 
 class DOMRenderer {
-    static renderBoard(board) {
+    static renderBoard(player) {
+        const board = player.board;
+        const type = player.type;
+
         // Create cells
         const cells = [];
         board.coordinates.forEach((value, index) => {
@@ -18,9 +21,9 @@ class DOMRenderer {
             cells.push(cell);
         });
 
-        // Create grid layer
+        // Create grid stage
         const gridStage = createEl('div', {
-            classes: ['grid-stage'],
+            classes: ['grid-stage', `${type}`],
             attrs: { style: `--cols:${board.width};` },
             children: [...cells],
         });
@@ -30,9 +33,12 @@ class DOMRenderer {
         app.appendChild(gridStage);
     }
 
-    static previewShip(ship, valid, board) {
+    static previewShip(ship, valid, player) {
+        const board = player.board;
+        const type = player.type;
+
         // Clear preview ship
-        const gridStage = document.querySelector('.grid-stage');
+        const gridStage = document.querySelector(`.grid-stage.${type}`);
         const existing = gridStage.querySelector('.preview-ship');
         if (existing) existing.remove();
 
@@ -55,7 +61,8 @@ class DOMRenderer {
         gridStage.append(previewShip);
     }
 
-    static renderShip(ship, board) {
+    static renderShip(ship, player) {
+        const board = player.board;
         const cellPercent = 100 / board.width;
         const placedShip = createEl('img', {
             classes: ['ship'],
@@ -71,7 +78,7 @@ class DOMRenderer {
                 src: img[`ship${ship.length}`],
             },
         });
-        document.querySelector('.grid-stage').append(placedShip);
+        document.querySelector(`.grid-stage.${player.type}`).append(placedShip);
     }
 }
 

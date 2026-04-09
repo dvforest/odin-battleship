@@ -15,13 +15,15 @@ class GameController {
         this.player1 = new Player('real');
         this.player2 = new Player('computer');
         this.playerShipPlacement = new PlacementState();
+        this.enemyShipPlacement = new PlacementState();
         this.activePlayer = this.player1;
         this.isGameOver = false;
         this.phase = null;
     }
 
     start() {
-        DOMRenderer.renderBoard(this.player1.board);
+        DOMRenderer.renderBoard(this.player2);
+        DOMRenderer.renderBoard(this.player1);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
     }
 
@@ -39,7 +41,7 @@ class GameController {
             ship.direction = this.playerShipPlacement.currentDirection;
 
             const valid = playerBoard.canPlaceShip(ship);
-            if (valid) DOMRenderer.previewShip(ship, valid, playerBoard);
+            if (playerBoard.isInBounds(ship)) DOMRenderer.previewShip(ship, valid, this.player1);
         }
     }
 
@@ -55,7 +57,7 @@ class GameController {
 
             if (valid) {
                 playerBoard.placeShip(ship);
-                DOMRenderer.renderShip(ship, playerBoard);
+                DOMRenderer.renderShip(ship, this.player1);
                 this.playerShipPlacement.currentShipIndex += 1;
                 if (this.playerShipPlacement.isComplete()) {
                     this.advancePhase();
@@ -76,7 +78,7 @@ class GameController {
                     ship.direction = this.playerShipPlacement.currentDirection;
 
                     const valid = playerBoard.canPlaceShip(ship);
-                    if (valid) DOMRenderer.previewShip(ship, valid, playerBoard);
+                    if (valid) DOMRenderer.previewShip(ship, valid, this.player1);
                     break;
                 }
             }

@@ -48,13 +48,19 @@ class Gameboard {
     }
 
     canPlaceShip(ship) {
+        if (!this.isInBounds(ship)) return false;
+        const coordinates = this.getShipCoords(ship);
+        return coordinates.every(([x, y]) => {
+            let index = this.getIndex([x, y]);
+            return this.coordinates[index] === null;
+        });
+    }
+
+    isInBounds(ship) {
         const coordinates = this.getShipCoords(ship);
         return coordinates.every(([x, y]) => {
             const inBounds = x >= 0 && x < this.width && y >= 0 && y < this.height;
-            if (!inBounds) return false;
-
-            let index = this.getIndex([x, y]);
-            return this.coordinates[index] === null;
+            return inBounds;
         });
     }
 

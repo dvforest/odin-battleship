@@ -20,6 +20,7 @@ h6 {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 100px;
 }
 
 .grid-stage {
@@ -46,9 +47,11 @@ h6 {
     position: absolute;
     z-index: 3;
     pointer-events: none;
-    filter: hue-rotate(330deg) saturate(2);
+    filter: invert(17%) sepia(94%) saturate(7480%) hue-rotate(1deg) brightness(102%) contrast(119%);
+    opacity: 0.3;
 }
 
 .preview-ship.valid {
-    filter: hue-rotate(200deg) saturate(2);
+    filter: invert(64%) sepia(96%) saturate(6000%) hue-rotate(75deg) brightness(120%) contrast(130%);
+    opacity: 0.3;
 }
