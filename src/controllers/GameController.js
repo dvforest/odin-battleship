@@ -14,8 +14,8 @@ class GameController {
     constructor() {
         this.player1 = new Player('real');
         this.player2 = new Player('computer');
-        this.playerShipPlacement = new PlacementState();
-        this.enemyShipPlacement = new PlacementState();
+        this.playerPlacement = new PlacementState();
+        this.enemyPlacement = new PlacementState();
         this.activePlayer = this.player1;
         this.isGameOver = false;
         this.phase = null;
@@ -24,6 +24,7 @@ class GameController {
     start() {
         DOMRenderer.renderBoard(this.player2);
         DOMRenderer.renderBoard(this.player1);
+        this.placeRandomShips(this.player2, this.enemyPlacement);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
     }
 
@@ -31,14 +32,44 @@ class GameController {
         this.activePlayer = this.activePlayer === this.player1 ? this.player2 : this.player1;
     }
 
+    placeRandomShips(player, placementState) {
+        let index = placementState.currentShipIndex;
+
+        while (index < placementState.shipsToPlace.length) {
+            // Assign a random direction
+            const options = ['vertical', 'horizontal'];
+            const direction = options[Math.floor(Math.random() * options.length)];
+            const currentShip = placementState.shipsToPlace[index];
+            currentShip.direction = direction;
+
+            // Test positions until a valid placement is found
+            do {
+                const x =
+                    direction === 'horizontal'
+                        ? Math.floor(Math.random() * (player.board.width - currentShip.length))
+                        : Math.floor(Math.random() * player.board.width);
+                const y =
+                    direction === 'vertical'
+                        ? Math.floor(Math.random() * (player.board.height - currentShip.length))
+                        : Math.floor(Math.random() * player.board.height);
+                currentShip.position = [x, y];
+            } while (!player.board.canPlaceShip(currentShip));
+
+            // Move to next ship
+            player.board.placeShip(currentShip);
+            DOMRenderer.renderShip(currentShip, player);
+            index++;
+        }
+    }
+
     handleHover(x, y) {
         if (this.phase === gamePhase.PLACING_SHIPS) {
             const playerBoard = this.player1.board;
-            const ship = this.playerShipPlacement.getCurrentShip();
-            this.playerShipPlacement.currentPosition = [x, y];
+            const ship = this.playerPlacement.getCurrentShip();
+            this.playerPlacement.currentPosition = [x, y];
 
-            ship.position = this.playerShipPlacement.currentPosition;
-            ship.direction = this.playerShipPlacement.currentDirection;
+            ship.position = this.playerPlacement.currentPosition;
+            ship.direction = this.playerPlacement.currentDirection;
 
             const valid = playerBoard.canPlaceShip(ship);
             if (playerBoard.isInBounds(ship)) DOMRenderer.previewShip(ship, valid, this.player1);
@@ -48,18 +79,18 @@ class GameController {
     handleClick(x, y) {
         if (this.phase === gamePhase.PLACING_SHIPS) {
             const playerBoard = this.player1.board;
-            const ship = this.playerShipPlacement.getCurrentShip();
+            const ship = this.playerPlacement.getCurrentShip();
 
-            ship.position = this.playerShipPlacement.currentPosition;
-            ship.direction = this.playerShipPlacement.currentDirection;
+            ship.position = this.playerPlacement.currentPosition;
+            ship.direction = this.playerPlacement.currentDirection;
 
             const valid = playerBoard.canPlaceShip(ship);
 
             if (valid) {
                 playerBoard.placeShip(ship);
                 DOMRenderer.renderShip(ship, this.player1);
-                this.playerShipPlacement.currentShipIndex += 1;
-                if (this.playerShipPlacement.isComplete()) {
+                this.playerPlacement.currentShipIndex += 1;
+                if (this.playerPlacement.isComplete()) {
                     this.advancePhase();
                 }
             }
@@ -70,12 +101,12 @@ class GameController {
         if (this.phase === gamePhase.PLACING_SHIPS) {
             switch (keyCode) {
                 case 'KeyR': {
-                    this.playerShipPlacement.rotate();
+                    this.playerPlacement.rotate();
                     const playerBoard = this.player1.board;
-                    const ship = this.playerShipPlacement.getCurrentShip();
+                    const ship = this.playerPlacement.getCurrentShip();
 
-                    ship.position = this.playerShipPlacement.currentPosition;
-                    ship.direction = this.playerShipPlacement.currentDirection;
+                    ship.position = this.playerPlacement.currentPosition;
+                    ship.direction = this.playerPlacement.currentDirection;
 
                     const valid = playerBoard.canPlaceShip(ship);
                     if (valid) DOMRenderer.previewShip(ship, valid, this.player1);

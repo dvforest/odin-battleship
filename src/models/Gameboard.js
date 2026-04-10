@@ -48,6 +48,8 @@ class Gameboard {
     }
 
     canPlaceShip(ship) {
+        if (!ship.position) return false;
+        if (!ship.direction) return false;
         if (!this.isInBounds(ship)) return false;
         const coordinates = this.getShipCoords(ship);
         return coordinates.every(([x, y]) => {
