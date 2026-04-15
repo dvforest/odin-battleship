@@ -35,12 +35,9 @@ class DOMRenderer {
 
     static previewShip(ship, valid, player) {
         const board = player.board;
-        const type = player.type;
+        const gridStage = document.querySelector(`.grid-stage.${player.type}`);
 
-        // Clear preview ship
-        const gridStage = document.querySelector(`.grid-stage.${type}`);
-        const existing = gridStage.querySelector('.preview-ship');
-        if (existing) existing.remove();
+        this.clearPreviewShip(player);
 
         const cellPercent = 100 / board.width;
         const previewShip = createEl('img', {
@@ -59,6 +56,12 @@ class DOMRenderer {
         });
         if (valid) previewShip.classList.add('valid');
         gridStage.append(previewShip);
+    }
+
+    static clearPreviewShip(player) {
+        const gridStage = document.querySelector(`.grid-stage.${player.type}`);
+        const existing = gridStage.querySelector('.preview-ship');
+        if (existing) existing.remove();
     }
 
     static renderShip(ship, player) {

@@ -91,6 +91,7 @@ class GameController {
                 DOMRenderer.renderShip(ship, this.player1);
                 this.playerPlacement.currentShipIndex += 1;
                 if (this.playerPlacement.isComplete()) {
+                    DOMRenderer.clearPreviewShip(this.player1);
                     this.advancePhase();
                 }
             }
