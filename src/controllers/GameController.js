@@ -1,4 +1,5 @@
 import { Player } from '../models/Player';
+import { Ship } from '../models/Ship.js';
 import { DOMRenderer } from '../ui/DOMRenderer.js';
 import { UIMode, getUIMode, setUIMode } from '../ui/UIMode.js';
 import { PlacementState } from './placement/PlacementState.js';
@@ -74,6 +75,11 @@ class GameController {
             const valid = playerBoard.canPlaceShip(ship);
             if (playerBoard.isInBounds(ship)) DOMRenderer.previewShip(ship, valid, this.player1);
         }
+
+        if (this.phase === gamePhase.PLAYER_TURN) {
+            const enemyBoard = this.player2.board;
+            DOMRenderer.previewTarget([x, y], this.player2);
+        }
     }
 
     handleClick(x, y) {
@@ -94,6 +100,18 @@ class GameController {
                     DOMRenderer.clearPreviewShip(this.player1);
                     this.advancePhase();
                 }
+            }
+        }
+
+        if (this.phase === gamePhase.PLAYER_TURN) {
+            const enemyBoard = this.player2.board;
+            enemyBoard.receiveAttack([x, y]);
+            const value = enemyBoard.getValue([x, y]);
+            if (value === 'miss') {
+                DOMRenderer.renderPin([x, y], this.player2, 'White');
+            }
+            if (value instanceof Ship) {
+                DOMRenderer.renderPin([x, y], this.player2, 'Red');
             }
         }
     }

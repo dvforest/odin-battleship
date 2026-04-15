@@ -10,20 +10,20 @@ export function init(controller) {
 }
 
 function onHover(e) {
-    if (getUIMode() !== UIMode.PLACING_SHIPS) return;
     const cell = e.target.closest('.grid-cell');
     if (!cell) return;
-    if (cell.closest('.computer')) return;
+    if (getUIMode() === UIMode.PLACING_SHIPS && cell.closest('.computer')) return;
+    if (getUIMode() === UIMode.PLAYER_TURN && !cell.closest('.computer')) return;
     const x = Number(cell.dataset.x);
     const y = Number(cell.dataset.y);
     gameController.handleHover(x, y);
 }
 
 function onClick(e) {
-    if (getUIMode() !== UIMode.PLACING_SHIPS) return;
     const cell = e.target.closest('.grid-cell');
     if (!cell) return;
-    if (cell.closest('.computer')) return;
+    if (getUIMode() === UIMode.PLACING_SHIPS && cell.closest('.computer')) return;
+    if (getUIMode() === UIMode.PLAYER_TURN && !cell.closest('.computer')) return;
     const x = Number(cell.dataset.x);
     const y = Number(cell.dataset.y);
     gameController.handleClick(x, y);

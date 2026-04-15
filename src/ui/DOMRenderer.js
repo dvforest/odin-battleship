@@ -58,10 +58,56 @@ class DOMRenderer {
         gridStage.append(previewShip);
     }
 
+    static previewTarget([x, y], player) {
+        const board = player.board;
+        const gridStage = document.querySelector(`.grid-stage.${player.type}`);
+
+        this.clearPreviewTarget(player);
+
+        const cellPercent = 100 / board.width;
+        const previewTarget = createEl('img', {
+            classes: ['preview-target'],
+            attrs: {
+                style: `
+                        left: ${x * cellPercent}%;
+                        top: ${y * cellPercent}%;
+                        width: ${cellPercent}%;
+                        height: ${cellPercent}%;
+                    `,
+                src: img.target,
+            },
+        });
+        gridStage.append(previewTarget);
+    }
+
     static clearPreviewShip(player) {
         const gridStage = document.querySelector(`.grid-stage.${player.type}`);
         const existing = gridStage.querySelector('.preview-ship');
         if (existing) existing.remove();
+    }
+
+    static clearPreviewTarget(player) {
+        const gridStage = document.querySelector(`.grid-stage.${player.type}`);
+        const existing = gridStage.querySelector('.preview-target');
+        if (existing) existing.remove();
+    }
+
+    static renderPin([x, y], player, color) {
+        const board = player.board;
+        const cellPercent = 100 / board.width;
+        const placedPin = createEl('img', {
+            classes: ['pin'],
+            attrs: {
+                style: `
+                        left: ${x * cellPercent}%;
+                        top: ${y * cellPercent - 2}%;
+                        width: ${cellPercent}%;
+                        height: ${cellPercent}%;
+                    `,
+                src: img[`pin${color}`],
+            },
+        });
+        document.querySelector(`.grid-stage.${player.type}`).append(placedPin);
     }
 
     static renderShip(ship, player) {

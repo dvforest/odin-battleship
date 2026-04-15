@@ -43,6 +43,18 @@ h6 {
     pointer-events: none;
 }
 
+.preview-target {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.pin {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+}
+
 .preview-ship {
     position: absolute;
     z-index: 3;
