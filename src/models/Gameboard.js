@@ -86,7 +86,7 @@ class Gameboard {
 
     receiveAttack([x, y]) {
         const ship = this.getValue([x, y]);
-        if (ship) {
+        if (ship instanceof Ship) {
             ship.hit();
             if (ship.isSunk()) {
                 const index = this.ships.indexOf(ship);
