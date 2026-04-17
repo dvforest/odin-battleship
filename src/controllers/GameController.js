@@ -101,6 +101,7 @@ class GameController {
                     this.advancePhase();
                 }
             }
+            return;
         }
 
         if (this.phase === gamePhase.PLAYER_TURN) {
@@ -113,6 +114,7 @@ class GameController {
             if (value instanceof Ship) {
                 DOMRenderer.renderPin([x, y], this.player2, 'Red');
             }
+            return;
         }
     }
 
