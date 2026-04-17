@@ -106,12 +106,11 @@ class GameController {
 
         if (this.phase === gamePhase.PLAYER_TURN) {
             const enemyBoard = this.player2.board;
-            enemyBoard.receiveAttack([x, y]);
-            const value = enemyBoard.getValue([x, y]);
-            if (value === 'miss') {
+            const target = enemyBoard.receiveAttack([x, y]);
+            if (target === 'miss') {
                 DOMRenderer.renderPin([x, y], this.player2, 'White');
             }
-            if (value instanceof Ship) {
+            if (target instanceof Ship) {
                 DOMRenderer.renderPin([x, y], this.player2, 'Red');
             }
             return;

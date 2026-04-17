@@ -92,8 +92,10 @@ class Gameboard {
                 const index = this.ships.indexOf(ship);
                 this.ships.splice(index, 1);
             }
+        } else {
+            this.setValue('miss', [x, y]);
         }
-        this.setValue('miss', [x, y]);
+        return this.getValue([x, y]);
     }
 }
 
