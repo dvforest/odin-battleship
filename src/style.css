@@ -28,7 +28,7 @@ h6 {
     position: relative;
     grid-template-columns: repeat(var(--cols), 1fr);
     width: 500px;
-    height: 500px;
+    aspect-ratio: 1;
     border: 3px solid rgb(208, 208, 208);
 }
 
