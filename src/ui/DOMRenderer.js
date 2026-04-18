@@ -92,11 +92,11 @@ class DOMRenderer {
         if (existing) existing.remove();
     }
 
-    static renderPin([x, y], player, color) {
+    static renderPeg([x, y], player, color) {
         const board = player.board;
         const cellPercent = 100 / board.width;
-        const placedPin = createEl('img', {
-            classes: ['pin'],
+        const placedPeg = createEl('img', {
+            classes: ['peg'],
             attrs: {
                 style: `
                         left: ${x * cellPercent}%;
@@ -104,10 +104,10 @@ class DOMRenderer {
                         width: ${cellPercent}%;
                         height: ${cellPercent}%;
                     `,
-                src: img[`pin${color}`],
+                src: img[`peg${color}`],
             },
         });
-        document.querySelector(`.grid-stage.${player.type}`).append(placedPin);
+        document.querySelector(`.grid-stage.${player.type}`).append(placedPeg);
     }
 
     static renderShip(ship, player) {

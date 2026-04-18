@@ -2,7 +2,8 @@ import { Player } from '../models/Player';
 import { Ship } from '../models/Ship.js';
 import { DOMRenderer } from '../ui/DOMRenderer.js';
 import { UIMode, getUIMode, setUIMode } from '../ui/UIMode.js';
-import { PlacementState } from './placement/PlacementState.js';
+import { PlacementState } from './state/PlacementState.js';
+import { AiState } from './state/AiState.js';
 
 const gamePhase = {
     PLACING_SHIPS: 'placing-ships',
@@ -17,7 +18,7 @@ class GameController {
         this.player2 = new Player('computer');
         this.playerPlacement = new PlacementState();
         this.enemyPlacement = new PlacementState();
-        this.activePlayer = this.player1;
+        this.ai = new AiState(this.player1.board);
         this.isGameOver = false;
         this.phase = null;
     }
@@ -27,10 +28,6 @@ class GameController {
         DOMRenderer.renderBoard(this.player1);
         this.placeRandomShips(this.player2, this.enemyPlacement);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
-    }
-
-    switchTurn() {
-        this.activePlayer = this.activePlayer === this.player1 ? this.player2 : this.player1;
     }
 
     placeRandomShips(player, placementState) {
@@ -56,11 +53,14 @@ class GameController {
                 currentShip.position = [x, y];
             } while (!player.board.canPlaceShip(currentShip));
 
-            // Move to next ship
+            // Place the ship on the board and iterate
             player.board.placeShip(currentShip);
-            DOMRenderer.renderShip(currentShip, player);
             index++;
+
+            // Uncomment this line to preview ship placement
+            DOMRenderer.renderShip(currentShip, player);
         }
+        console.log(this.player1.board.coordinates);
     }
 
     handleHover(x, y) {
@@ -105,15 +105,30 @@ class GameController {
         }
 
         if (this.phase === gamePhase.PLAYER_TURN) {
+            // Deal attack on the board
             const enemyBoard = this.player2.board;
             const target = enemyBoard.receiveAttack([x, y]);
-            if (target === 'miss') {
-                DOMRenderer.renderPin([x, y], this.player2, 'White');
+
+            // If valid target, render the peg
+            if (target.peg) {
+                if (target.peg === 'miss') DOMRenderer.renderPeg([x, y], this.player2, 'White');
+                if (target.peg === 'hit') DOMRenderer.renderPeg([x, y], this.player2, 'Red');
+
+                this.advancePhase();
             }
-            if (target instanceof Ship) {
-                DOMRenderer.renderPin([x, y], this.player2, 'Red');
-            }
-            return;
+        }
+
+        if (this.phase === gamePhase.ENEMY_TURN) {
+            const enemyAttackCoord = this.ai.getNextAttack();
+            this.player1.board.receiveAttack(enemyAttackCoord);
+            const target = this.player1.board.getValue(enemyAttackCoord);
+
+            // Render the peg
+            if (target.peg === 'miss')
+                DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
+            if (target.peg === 'hit') DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
+
+            this.advancePhase();
         }
     }
 
@@ -144,6 +159,12 @@ class GameController {
     advancePhase() {
         switch (this.phase) {
             case gamePhase.PLACING_SHIPS:
+                this.setPhase(gamePhase.PLAYER_TURN, UIMode.PLAYER_TURN);
+                break;
+            case gamePhase.PLAYER_TURN:
+                this.setPhase(gamePhase.ENEMY_TURN, UIMode.DISABLED);
+                break;
+            case gamePhase.ENEMY_TURN:
                 this.setPhase(gamePhase.PLAYER_TURN, UIMode.PLAYER_TURN);
                 break;
         }

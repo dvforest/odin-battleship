@@ -5,7 +5,10 @@ class Gameboard {
         this.width = width;
         this.height = height;
         this.ships = [];
-        this.coordinates = Array(width * height).fill(null);
+        this.coordinates = Array.from({ length: width * height }, () => ({
+            ship: null,
+            peg: null,
+        }));
     }
 
     getIndex([x, y]) {
@@ -19,7 +22,12 @@ class Gameboard {
     }
 
     setValue(value, [x, y]) {
-        this.coordinates[this.getIndex([x, y])] = value;
+        const coord = this.coordinates[this.getIndex([x, y])];
+        if (value instanceof Ship) {
+            coord.ship = value;
+        }
+        if (value === 'miss') coord.peg = 'miss';
+        if (value === 'hit') coord.peg = 'hit';
     }
 
     getValue([x, y]) {
@@ -54,7 +62,7 @@ class Gameboard {
         const coordinates = this.getShipCoords(ship);
         return coordinates.every(([x, y]) => {
             let index = this.getIndex([x, y]);
-            return this.coordinates[index] === null;
+            return this.coordinates[index].ship === null;
         });
     }
 
@@ -84,17 +92,30 @@ class Gameboard {
         return this.ships.length > 0 ? true : false;
     }
 
+    removeShip(ship) {
+        const index = this.ships.indexOf(ship);
+        this.ships.splice(index, 1);
+    }
+
     receiveAttack([x, y]) {
-        const ship = this.getValue([x, y]);
-        if (ship instanceof Ship) {
+        // Get value of target at given coordinate
+        const target = this.getValue([x, y]);
+
+        // If target contains a ship but no peg, hit the ship
+        if (target.ship && !target.peg) {
+            const ship = target.ship;
             ship.hit();
+            this.setValue('hit', [x, y]);
             if (ship.isSunk()) {
-                const index = this.ships.indexOf(ship);
-                this.ships.splice(index, 1);
+                this.removeShip(ship);
             }
-        } else {
+        }
+
+        // If target contains no ship nor peg, assign 'miss'
+        if (!target.ship && !target.peg) {
             this.setValue('miss', [x, y]);
         }
+
         return this.getValue([x, y]);
     }
 }
