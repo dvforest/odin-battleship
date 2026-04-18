@@ -128,6 +128,7 @@ class GameController {
                 DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
             if (target.peg === 'hit') DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
 
+            this.ai.removeExhaustedClusters();
             this.advancePhase();
         }
     }

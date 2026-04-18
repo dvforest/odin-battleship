@@ -1,4 +1,4 @@
-class FoundShip {
+class Cluster {
     constructor() {
         this.direction = null;
         this.coords = []; // Array of [x, y] coordinates;
@@ -8,39 +8,39 @@ class FoundShip {
 class AiState {
     constructor(board) {
         this.board = board;
-        this.foundShips = [];
+        this.clusters = [];
     }
 
     // Return the next logical target.
     getNextAttack() {
         let target = null;
 
-        // If at least one ship has been found, try to sink it
-        if (this.foundShips.length) {
-            const currentShip = this.foundShips[0];
+        // If at least one cluster has been found, focus on it
+        if (this.clusters.length) {
+            const cluster = this.clusters[0];
 
-            // If ship only has a single coordinate, try to find a second to determine direction
-            if (currentShip.coords.length === 1) {
+            // If cluster only has a single coordinate, try to find a second to determine direction
+            if (cluster.coords.length === 1) {
                 // Search the four adjacent coordinates for a target with no peg
-                target = this.findAdjacentTarget(currentShip.coords[0]);
+                target = this.findAdjacentTarget(cluster.coords[0]);
 
-                // If a ship is found at the target, register the coord and use it to calculate the ship's direction
+                // If the hit is successful, register the coordinate and use it to calculate the cluster's direction
+
                 if (this.board.getValue(target).ship) {
-                    currentShip.coords.push(target);
-                    this.findDirection(currentShip);
+                    cluster.coords.push(target);
+                    this.findDirection(cluster);
                 }
                 return target;
             }
 
-            // If ship has a direction
-            if (currentShip.direction) {
+            // If cluster has a direction
+            if (cluster.direction) {
                 // Search either end of the line of known coordinates
-                target = this.findDirectionalTarget(currentShip);
+                target = this.findDirectionalTarget(cluster);
 
-                // If a ship is found at the target, register the coord
+                // If the hit is successful, register the coord
                 if (this.board.getValue(target).ship) {
-                    currentShip.coords.push(target);
-                    this.removeSunkShip(currentShip);
+                    cluster.coords.push(target);
                 }
                 return target;
             }
@@ -49,23 +49,22 @@ class AiState {
         // Search for random target as a fallback.
         if (!target) {
             const randomTarget = this.findRandomTarget();
-            const ship = this.board.getValue(randomTarget).ship;
-            if (ship) {
-                const newShip = new FoundShip();
-                newShip.coords.push(randomTarget);
-                this.foundShips.push(newShip);
+            if (this.board.getValue(randomTarget).ship) {
+                const cluster = new Cluster();
+                cluster.coords.push(randomTarget);
+                this.clusters.push(cluster);
             }
             return randomTarget;
         }
     }
 
-    // Given a ship with two coordinates, calculate and set that ship's direction.
-    findDirection(ship) {
-        const x1 = ship.coords[0][0];
-        const x2 = ship.coords[1][0];
+    // Given a cluster with two coordinates, calculate and set that cluster's direction.
+    findDirection(cluster) {
+        const x1 = cluster.coords[0][0];
+        const x2 = cluster.coords[1][0];
 
-        if (x1 === x2) ship.direction = 'vertical';
-        else ship.direction = 'horizontal';
+        if (x1 === x2) cluster.direction = 'vertical';
+        else cluster.direction = 'horizontal';
     }
 
     // Search for a random target that doesn't contain a peg
@@ -101,52 +100,52 @@ class AiState {
         }
     }
 
-    // Given a ship with a direction, return a coordinate at either end of the known coordinates.
-    findDirectionalTarget(ship) {
+    // Given a cluster with a direction, return a coordinate at either end of the known coordinates.
+    findDirectionalTarget(cluster) {
         // Determine whether to use the x [0] or y [1] component.
         let index = null;
-        ship.direction === 'horizontal' ? (index = 0) : (index = 1);
+        cluster.direction === 'horizontal' ? (index = 0) : (index = 1);
 
         // Sort the coords based on the direction
-        ship.coords.sort((a, b) => a[index] - b[index]);
+        cluster.coords.sort((a, b) => a[index] - b[index]);
 
         // If horizontal direction, try to find a valid target to the left (first value) and right (last value)
-        if (ship.direction === 'horizontal') {
+        if (cluster.direction === 'horizontal') {
             // Search for target left
-            let [x, y] = ship.coords[0];
+            let [x, y] = cluster.coords[0];
             const attackLeft = [x - 1, y];
             if (this.isInBounds(attackLeft) && !this.board.getValue(attackLeft).peg)
                 return attackLeft;
 
             // Search for target right
-            [x, y] = ship.coords[ship.coords.length - 1];
+            [x, y] = cluster.coords[cluster.coords.length - 1];
             const attackRight = [x + 1, y];
             if (this.isInBounds(attackRight) && !this.board.getValue(attackRight).peg)
                 return attackRight;
         }
 
         // If vertical direction, try to find a valid target up (first value) and down (last value)
-        if (ship.direction === 'vertical') {
+        if (cluster.direction === 'vertical') {
             // Search for target up
-            let [x, y] = ship.coords[0];
+            let [x, y] = cluster.coords[0];
             const attackUp = [x, y - 1];
             if (this.isInBounds(attackUp) && !this.board.getValue(attackUp).peg) return attackUp;
 
             // Search for target down
-            [x, y] = ship.coords[ship.coords.length - 1];
+            [x, y] = cluster.coords[cluster.coords.length - 1];
             const attackDown = [x, y + 1];
             if (this.isInBounds(attackDown) && !this.board.getValue(attackDown).peg)
                 return attackDown;
         }
     }
 
-    // Removes ship from foundShips list if the number of coordinates matches the real length of the ship
-    removeSunkShip(ship) {
-        const realLength = this.board.getValue(ship.coords[0]).ship.length;
-        if (ship.coords.length === realLength) {
-            const index = this.foundShips.indexOf(ship);
-            this.foundShips.splice(index, 1);
-        }
+    // Removes exhausted clusters from the clusters list.
+    // An exhausted cluster is defined by containing pegs past each end of its directional axis.
+    removeExhaustedClusters() {
+        this.clusters = this.clusters.filter((cluster) => {
+            if (!cluster.direction) return true;
+            return !!this.findDirectionalTarget(cluster);
+        });
     }
 
     isInBounds([x, y]) {
