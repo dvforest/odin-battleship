@@ -60,7 +60,6 @@ class GameController {
             // Uncomment this line to preview ship placement
             DOMRenderer.renderShip(currentShip, player);
         }
-        console.log(this.player1.board.coordinates);
     }
 
     handleHover(x, y) {
@@ -128,7 +127,7 @@ class GameController {
                 DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
             if (target.peg === 'hit') DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
 
-            this.ai.removeExhaustedClusters();
+            this.ai.removeExhausted();
             this.advancePhase();
         }
     }
