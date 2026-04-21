@@ -15,19 +15,29 @@ h6 {
 }
 
 .app {
+    padding-top: 20px;
     width: 100vw;
     height: 700px;
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.battlefield {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 100px;
+    gap: 20px;
 }
 
 .grid-stage {
     display: grid;
     position: relative;
     grid-template-columns: repeat(var(--cols), 1fr);
-    width: 500px;
+    width: 350px;
     aspect-ratio: 1;
     border: 3px solid rgb(208, 208, 208);
 }
@@ -66,4 +76,42 @@ h6 {
 .preview-ship.valid {
     filter: invert(64%) sepia(96%) saturate(6000%) hue-rotate(75deg) brightness(120%) contrast(130%);
     opacity: 0.3;
+}
+
+.text-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.main-title {
+    font-family: 'Black Ops One', system-ui;
+    font-weight: 1000;
+    font-size: 100px;
+    height: 100px;
+    font-style: normal;
+}
+
+.message {
+    font-family: 'Electrolize', sans-serif;
+    margin-top: 30px;
+    font-weight: 800;
+    font-size: 30px;
+    font-style: normal;
+}
+
+.hint {
+    margin-top: 10px;
+    font-weight: 400;
+    font-size: 18px;
+    color: rgb(196, 196, 196);
+}
+
+.fade {
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+.fade.show {
+    opacity: 1;
 }

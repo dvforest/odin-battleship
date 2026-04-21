@@ -24,9 +24,11 @@ class GameController {
     }
 
     start() {
-        DOMRenderer.renderBoard(this.player2);
+        DOMRenderer.renderTitle();
+        DOMRenderer.renderMessage(`Place your ships.`, `[ Use 'R' key to rotate ]`);
         DOMRenderer.renderBoard(this.player1);
-        this.placeRandomShips(this.player2, this.enemyPlacement);
+        //DOMRenderer.renderBoard(this.player2);
+        //this.placeRandomShips(this.player2, this.enemyPlacement);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
     }
 
@@ -58,7 +60,7 @@ class GameController {
             index++;
 
             // Uncomment this line to preview ship placement
-            DOMRenderer.renderShip(currentShip, player);
+            //DOMRenderer.renderShip(currentShip, player);
         }
     }
 

@@ -30,7 +30,14 @@ class DOMRenderer {
 
         // Append grid stage to app
         const app = document.querySelector('.app');
-        app.appendChild(gridStage);
+        let battlefield = document.querySelector('.battlefield');
+        if (!battlefield) {
+            battlefield = createEl('div', {
+                classes: ['battlefield'],
+            });
+            app.appendChild(battlefield);
+        }
+        battlefield.appendChild(gridStage);
     }
 
     static previewShip(ship, valid, player) {
@@ -128,6 +135,66 @@ class DOMRenderer {
             },
         });
         document.querySelector(`.grid-stage.${player.type}`).append(placedShip);
+    }
+
+    static renderTitle() {
+        const app = document.querySelector('.app');
+        const title = createEl('div', {
+            classes: ['main-title'],
+            text: 'BATTLESHIP',
+        });
+        app.append(title);
+    }
+
+    static renderMessage(text, hintText) {
+        const app = document.querySelector('.app');
+
+        // Search for text box, or create it if non-existing
+        let message = document.querySelector('.message');
+        if (!message) {
+            message = createEl('div', {
+                classes: ['message'],
+            });
+            app.append(message);
+        }
+        this.animateTypewriter(message, text);
+
+        // Search for hint, or create it if non-existing
+        let hint = document.querySelector('.hint');
+        if (!hint) {
+            hint = createEl('div', {
+                classes: ['message', 'hint'],
+                text: hintText.toUpperCase(),
+            });
+            app.append(hint);
+        }
+        this.animateFade(hint);
+    }
+
+    static animateTypewriter(el, msg) {
+        const chars = [...msg];
+        el.textContent = '';
+        let index = 0;
+
+        function step() {
+            el.textContent += chars[index];
+            index++;
+
+            if (index < chars.length) {
+                requestAnimationFrame(step);
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    static animateFade(el) {
+        el.classList.add('fade');
+        el.classList.remove('show');
+        void el.offsetWidth;
+        el.classList.add('show');
+        requestAnimationFrame(() => {
+            el.classList.add('show');
+        });
     }
 }
 
