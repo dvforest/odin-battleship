@@ -174,10 +174,10 @@ class DOMRenderer {
         if (!hint) {
             hint = createEl('div', {
                 classes: ['message', 'hint'],
-                text: hintText.toUpperCase(),
             });
             app.append(hint);
         }
+        hint.textContent = hintText.toUpperCase();
         this.animateFade(hint);
     }
 
@@ -198,12 +198,14 @@ class DOMRenderer {
     }
 
     static animateFade(el) {
-        el.classList.add('fade');
-        el.classList.remove('show');
-        void el.offsetWidth;
-        el.classList.add('show');
+        // Reset to invisible instantly (no transition)
+        el.style.transition = 'none';
+        el.style.opacity = '0';
+
+        // Next frame: re-enable transition and fade to 1
         requestAnimationFrame(() => {
-            el.classList.add('show');
+            el.style.transition = 'opacity 3s ease';
+            el.style.opacity = '1';
         });
     }
 

@@ -57,7 +57,7 @@ class GameController {
             player.board.placeShip(currentShip);
             index++;
 
-            // Uncomment this line to preview ship placement
+            // Uncomment this line to preview random computer ship placement
             //DOMRenderer.renderShip(currentShip, player);
         }
     }
@@ -104,8 +104,11 @@ class GameController {
                     DOMRenderer.revealBoardWithSwipe(this.player2);
                     this.placeRandomShips(this.player2, this.enemyPlacement);
 
-                    // Lock player board visually
-                    DOMRenderer.lockBoard(this.player1);
+                    // Change message
+                    DOMRenderer.renderMessage(
+                        `Hunt down all enemy ships.`,
+                        `[ each turn, the ai will seek yours ]`,
+                    );
 
                     this.advancePhase();
                 }
@@ -114,6 +117,8 @@ class GameController {
         }
 
         if (this.phase === gamePhase.PLAYER_TURN) {
+            if (this.player2.board.getValue([x, y]).peg) return;
+
             // Deal attack on the board
             const enemyBoard = this.player2.board;
             const target = enemyBoard.receiveAttack([x, y]);
