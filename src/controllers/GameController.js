@@ -128,6 +128,11 @@ class GameController {
                 if (target.peg === 'miss') DOMRenderer.renderPeg([x, y], this.player2, 'White');
                 if (target.peg === 'hit') DOMRenderer.renderPeg([x, y], this.player2, 'Red');
 
+                // If all player ships are destroyed, declare ai the winner
+                if (!this.player2.board.containsShip()) {
+                    this.declareWinner(this.player1);
+                }
+
                 this.advancePhase();
             }
         }
@@ -143,6 +148,11 @@ class GameController {
                     DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
                 if (target.peg === 'hit')
                     DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
+
+                // If all player ships are destroyed, declare ai the winner
+                if (!this.player1.board.containsShip()) {
+                    this.declareWinner(this.player2);
+                }
 
                 this.ai.removeExhausted();
                 this.advancePhase();
@@ -172,6 +182,12 @@ class GameController {
     setPhase(phase, UIMode) {
         this.phase = phase;
         setUIMode(UIMode);
+    }
+
+    declareWinner(player) {
+        this.setPhase(gamePhase.GAME_OVER, UIMode.DISABLED);
+        const winner = player.type === 'computer' ? 'Computer' : 'Player';
+        DOMRenderer.renderMessage(`${winner} wins!`, 'refresh the page to play again');
     }
 
     advancePhase() {
