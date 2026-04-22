@@ -28,7 +28,13 @@ class DOMRenderer {
             children: [...cells],
         });
 
-        // Append grid stage to app
+        // Create clipping container
+        const clippingContainer = createEl('div', {
+            classes: ['clipping-container', `${type}`],
+            children: [gridStage],
+        });
+
+        // Append grid to app
         const app = document.querySelector('.app');
         let battlefield = document.querySelector('.battlefield');
         if (!battlefield) {
@@ -37,7 +43,7 @@ class DOMRenderer {
             });
             app.appendChild(battlefield);
         }
-        battlefield.appendChild(gridStage);
+        battlefield.appendChild(clippingContainer);
     }
 
     static previewShip(ship, valid, player) {
@@ -114,6 +120,10 @@ class DOMRenderer {
                 src: img[`peg${color}`],
             },
         });
+        requestAnimationFrame(() => {
+            placedPeg.classList.add('placed');
+        });
+
         document.querySelector(`.grid-stage.${player.type}`).append(placedPeg);
     }
 
@@ -195,6 +205,21 @@ class DOMRenderer {
         requestAnimationFrame(() => {
             el.classList.add('show');
         });
+    }
+
+    static revealBoardWithSwipe(player) {
+        this.renderBoard(player);
+        const clippingContainer = document.querySelector(`.clipping-container.${player.type}`);
+        const battlefield = document.querySelector('.battlefield');
+        requestAnimationFrame(() => {
+            clippingContainer.classList.add('revealed');
+            battlefield.classList.add('two-grids');
+        });
+    }
+
+    static lockBoard(player) {
+        const board = document.querySelector(`.grid-stage.${player.type}`);
+        board.classList.add('locked');
     }
 }
 

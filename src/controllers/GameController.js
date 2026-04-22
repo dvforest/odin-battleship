@@ -27,8 +27,6 @@ class GameController {
         DOMRenderer.renderTitle();
         DOMRenderer.renderMessage(`Place your ships.`, `[ Use 'R' key to rotate ]`);
         DOMRenderer.renderBoard(this.player1);
-        //DOMRenderer.renderBoard(this.player2);
-        //this.placeRandomShips(this.player2, this.enemyPlacement);
         this.setPhase(gamePhase.PLACING_SHIPS, UIMode.PLACING_SHIPS);
     }
 
@@ -97,8 +95,18 @@ class GameController {
                 playerBoard.placeShip(ship);
                 DOMRenderer.renderShip(ship, this.player1);
                 this.playerPlacement.currentShipIndex += 1;
+
+                // if placement is complete
                 if (this.playerPlacement.isComplete()) {
                     DOMRenderer.clearPreviewShip(this.player1);
+
+                    // Render enemy board and place random ships
+                    DOMRenderer.revealBoardWithSwipe(this.player2);
+                    this.placeRandomShips(this.player2, this.enemyPlacement);
+
+                    // Lock player board visually
+                    DOMRenderer.lockBoard(this.player1);
+
                     this.advancePhase();
                 }
             }
@@ -120,17 +128,20 @@ class GameController {
         }
 
         if (this.phase === gamePhase.ENEMY_TURN) {
-            const enemyAttackCoord = this.ai.getNextAttack();
-            this.player1.board.receiveAttack(enemyAttackCoord);
-            const target = this.player1.board.getValue(enemyAttackCoord);
+            setTimeout(() => {
+                const enemyAttackCoord = this.ai.getNextAttack();
+                this.player1.board.receiveAttack(enemyAttackCoord);
+                const target = this.player1.board.getValue(enemyAttackCoord);
 
-            // Render the peg
-            if (target.peg === 'miss')
-                DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
-            if (target.peg === 'hit') DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
+                // Render the peg
+                if (target.peg === 'miss')
+                    DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'White');
+                if (target.peg === 'hit')
+                    DOMRenderer.renderPeg(enemyAttackCoord, this.player1, 'Red');
 
-            this.ai.removeExhausted();
-            this.advancePhase();
+                this.ai.removeExhausted();
+                this.advancePhase();
+            }, 500);
         }
     }
 
